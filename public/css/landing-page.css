@@ -1,0 +1,23 @@
+body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef5fb;
+    }
+    /* Menggunakan warna custom agar tetap identik dengan desain asli */
+    .bg-custom-primary {
+      background-color: #0b3c8c !important;
+    }
+    .text-custom-primary {
+      color: #0b3c8c !important;
+    }
+    .bg-custom-gradient {
+      background: linear-gradient(135deg, #0b3c8c, #1e88e5);
+    }
+    /* Batasan ukuran gambar game di sidebar agar rapi */
+    .sidebar-img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
+    .hero-img {
+      max-width: 300px;
+    }

@@ -1,0 +1,24 @@
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+        }
+        :root {
+            --primary-color: #2e51a2;
+        }
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border: none;
+            box-shadow: 0 4px 12px rgba(46, 81, 162, 0.2);
+        }
+        .btn-primary-custom:hover {
+            background-color: #233f82;
+        }
+        .text-primary-custom {
+            color: var(--primary-color);
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(46, 81, 162, 0.25);
+        }
