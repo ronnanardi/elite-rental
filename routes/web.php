@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+
+use App\Http\Controllers\ProfilController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\RentalController;
@@ -16,18 +17,27 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'admin'])->name('dashboard');
 
-Route::get('/sewa/{unit_id}/pilih-waktu', [RentalController::class, 'pilihWaktu'])
-     ->middleware('auth')
-     ->name('sewa.pilih-waktu');
+// Route::get('/sewa/{unit_id}/pilih-waktu', [RentalController::class, 'pilihWaktu'])
+//      ->middleware('auth')
+//      ->name('sewa.pilih-waktu');
 
 Route::middleware('auth')->group(function () {
     Route::get('/sewa/{unit_id}/pilih-waktu', [RentalController::class, 'pilihWaktu'])->name('sewa.pilih-waktu');
     Route::post('/sewa/{unit_id}/pilih-waktu', [RentalController::class, 'simpanWaktu'])->name('sewa.simpan-waktu');
+    Route::get('/sewa/{rental_id}/pembayaran', [RentalController::class, 'pembayaran'])->name('sewa.pembayaran');
+    Route::post('/sewa/{rental_id}/upload-bukti', [RentalController::class, 'uploadBukti'])->name('sewa.upload-bukti');
+    Route::get('/sewa/berhasil', [RentalController::class, 'berhasil'])->name('sewa.berhasil');
+    Route::get('/profil', [ProfilController::class, 'index'])->name('profil.index');
+    Route::get('/profil/history', [ProfilController::class, 'history'])->name('profil.history');
 });
 
-Route::get('/sewa/{rental_id}/pembayaran', [RentalController::class, 'pembayaran'])
-     ->middleware('auth')
-     ->name('sewa.pembayaran');
+// Route::get('/profil/history', function () {
+//     return 'halaman history (coming soon)';
+// })->middleware('auth')->name('profil.history');
+
+// Route::get('/sewa/{rental_id}/pembayaran', [RentalController::class, 'pembayaran'])
+//      ->middleware('auth')
+//      ->name('sewa.pembayaran');
      
 // -- debugging --
 Route::get('/cek-status', function () {

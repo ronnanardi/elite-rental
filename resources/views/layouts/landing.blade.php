@@ -11,7 +11,7 @@
   {{-- Slot untuk tambahan CSS per halaman --}}
   {{ $styles ?? '' }}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
   {{-- NAVBAR — sama di semua halaman landing --}}
   <nav class="navbar navbar-expand-lg navbar-dark bg-custom-primary px-3 px-md-5 py-3">
@@ -50,7 +50,7 @@
                 <span class="fw-semibold text-light small">{{ Auth::user()->name }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profil</a></li>
+                <li><a class="dropdown-item" href="{{ route('profil.index') }}"><i class="bi bi-person me-2"></i>Profil</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                   <form method="POST" action="{{ route('logout') }}">
@@ -69,11 +69,13 @@
   </nav>
 
   {{-- KONTEN per halaman masuk di sini --}}
-  @yield('content')
+  <div class="flex-grow-1">
+    @yield('content')
+  </div>
 
   {{-- FOOTER --}}
   <footer class="bg-custom-primary text-white text-center py-3 mt-5">
-    <p class="m-0 small">© 2026 Rental PS</p>
+    <p class="m-0 small">© 2026 Elite Rental</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

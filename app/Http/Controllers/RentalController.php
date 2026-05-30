@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Unit;
 use App\Models\Rental;
 use Illuminate\Http\Request;
+use App\Models\Setting;
+use App\Models\Payment;
 
 class RentalController extends Controller
 {
@@ -77,5 +79,67 @@ class RentalController extends Controller
         ]);
 
         return redirect()->route('sewa.pembayaran', $rental->id);
+    }
+
+    public function pembayaran($rental_id)
+    {
+        $rental = Rental::with('unit')->findOrFail($rental_id);
+
+        // Pastikan rental milik user yang login
+        if ($rental->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Ambil setting QR & bank
+        $settings = Setting::whereIn('key', [
+            'qris_image',
+            'bank_name',
+            'account_number',
+            'account_name',
+        ])->pluck('value', 'key');
+
+        return view('sewa.pembayaran', compact('rental', 'settings'));
+    }
+
+    public function uploadBukti(Request $request, $rental_id)
+    {
+        $rental = Rental::findOrFail($rental_id);
+
+        if ($rental->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'proof_image' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ]);
+
+        // Simpan gambar
+        $path = $request->file('proof_image')->store('payments', 'public');
+
+        // Simpan ke tabel payments
+        Payment::create([
+            'rental_id'   => $rental->id,
+            'proof_image' => $path,
+            'status'      => 'pending',
+        ]);
+
+        // Update status rental
+        $rental->update(['status' => 'waiting_confirmation']);
+
+        return redirect()->route('sewa.berhasil')->with('berhasil', [
+            'konsol'  => $rental->unit->console_type,
+            'durasi'  => $rental->duration_minutes,
+            'total'   => $rental->total_price,
+        ]);
+    }
+
+    public function berhasil()
+    {
+        // Jika tidak ada data session, lempar ke home
+        if (!session('berhasil')) {
+            return redirect('/');
+        }
+
+        return view('sewa.berhasil');
     }
 }
