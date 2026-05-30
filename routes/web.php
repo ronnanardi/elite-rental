@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfilController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\RentalController;
+use App\Http\Controllers\Admin\DashboardController;
+
 // Landing page — publik
 Route::get('/', [RentalController::class, 'index']);
 
@@ -13,9 +15,21 @@ Route::get('/home', [RentalController::class, 'index'])
      ->name('home');
 
 // Sisanya tetap sama
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'admin'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'admin'])->name('dashboard');
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/konfirmasi/{rental_id}/terima', [DashboardController::class, 'terima'])->name('admin.terima');
+    Route::post('/konfirmasi/{rental_id}/tolak', [DashboardController::class, 'tolak'])->name('admin.tolak');
+    Route::get('/aktivasi', [DashboardController::class, 'aktivasi'])->name('admin.aktivasi');
+    Route::post('/aktivasi/input-kode', [DashboardController::class, 'inputKode'])->name('admin.input-kode');
+    Route::get('/bermain', [DashboardController::class, 'bermain'])->name('admin.bermain');
+    Route::post('/bermain/{rental_id}/selesai', [DashboardController::class, 'selesai'])->name('admin.selesai');
+    Route::get('/bermain/cek-alarm', [DashboardController::class, 'cekAlarm'])->name('admin.cek-alarm');
+    Route::get('/riwayat', [DashboardController::class, 'riwayat'])->name('admin.riwayat');
+});
 
 // Route::get('/sewa/{unit_id}/pilih-waktu', [RentalController::class, 'pilihWaktu'])
 //      ->middleware('auth')

@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
   @yield('styles')
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 
@@ -29,22 +30,22 @@
       <div class="menu-header px-2 mt-4 mb-2">MENU</div>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+          <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
             Konfirmasi
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ request()->is('admin/aktivasi') ? 'active' : '' }}" href="#">
+          <a class="nav-link {{ request()->routeIs('admin.aktivasi') ? 'active' : '' }}" href="{{ route('admin.aktivasi') }}">
             Aktivasi
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ request()->is('admin/bermain') ? 'active' : '' }}" href="#">
+          <a class="nav-link {{ request()->routeIs('admin.bermain') ? 'active' : '' }}" href="{{ route('admin.bermain') }}">
             Bermain
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ request()->is('admin/riwayat') ? 'active' : '' }}" href="#">
+          <a class="nav-link {{ request()->routeIs('admin.riwayat') ? 'active' : '' }}" href="{{ route('admin.riwayat') }}">
             Riwayat
           </a>
         </li>
@@ -53,7 +54,7 @@
 
     {{-- MAIN --}}
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-3">
-
+      
       {{-- TOPBAR --}}
       <div class="d-flex justify-content-between align-items-center flex-wrap flex-md-nowrap mb-4 bg-white p-3 rounded shadow-sm">
         <div class="w-50">
@@ -91,6 +92,15 @@
           </div>
         </div>
       </div>
+
+      {{-- Stat cards: tampil default, bisa disembunyikan per halaman --}}
+      @yield('stat_cards', View::make('admin.partials.stat-cards', [
+          'totalKonfirmasi' => \App\Models\Rental::where('status','waiting_confirmation')->count(),
+          'totalAktivasi'   => \App\Models\Rental::where('status','approved')->count(),
+          'totalBermain'    => \App\Models\Rental::where('status','active')->count(),
+          'totalSelesai'    => \App\Models\Rental::where('status','done')->count(),
+          'totalDitolak'    => \App\Models\Rental::where('status','rejected')->count(),
+      ]))
 
       {{-- KONTEN per halaman masuk di sini --}}
       @yield('content')

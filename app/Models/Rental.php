@@ -31,4 +31,10 @@ class Rental extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    protected $casts = [
+        'activated_at' => 'datetime',
+        'ends_at'      => 'datetime',
+        'reviewed_at'  => 'datetime',
+    ];
 }
