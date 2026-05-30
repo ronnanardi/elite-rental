@@ -3,22 +3,32 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Controllers\RentalController;
 // Landing page — publik
-Route::get('/', function () {
-    return view('landing-page');
-});
+Route::get('/', [RentalController::class, 'index']);
 
-// Landing page user setelah login (bisa sama view-nya)
-Route::get('/home', function () {
-    return view('landing-page');
-})->middleware(['auth'])->name('home');
+Route::get('/home', [RentalController::class, 'index'])
+     ->middleware(['auth'])
+     ->name('home');
 
-// Dashboard admin
+// Sisanya tetap sama
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'admin'])->name('dashboard'); // middleware role admin
+})->middleware(['auth', 'admin'])->name('dashboard');
 
+Route::get('/sewa/{unit_id}/pilih-waktu', [RentalController::class, 'pilihWaktu'])
+     ->middleware('auth')
+     ->name('sewa.pilih-waktu');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/sewa/{unit_id}/pilih-waktu', [RentalController::class, 'pilihWaktu'])->name('sewa.pilih-waktu');
+    Route::post('/sewa/{unit_id}/pilih-waktu', [RentalController::class, 'simpanWaktu'])->name('sewa.simpan-waktu');
+});
+
+Route::get('/sewa/{rental_id}/pembayaran', [RentalController::class, 'pembayaran'])
+     ->middleware('auth')
+     ->name('sewa.pembayaran');
+     
 // -- debugging --
 Route::get('/cek-status', function () {
     if (Auth::check()) {

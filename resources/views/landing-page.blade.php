@@ -28,31 +28,47 @@
         <h2 class="h3 fw-bold mb-4">Available PS Consoles</h2>
         <div class="row g-3">
           
+          {{-- loop dari controller --}}
+          @foreach($units as $unit)
           <div class="col-md-6">
-            <div class="card h-100 border-0 shadow-sm p-3 rounded-4">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/PlayStation_5_and_DualSense_with_transparent_background.png" class="card-img-top p-3 mx-auto" alt="PS5" style="height: 180px; object-fit: contain;">
-              <div class="card-body text-center d-flex flex-column justify-content-between">
-                <div>
-                  <h3 class="h5 card-title fw-bold">PlayStation 5</h3>
-                  <p class="card-text text-muted small">Performa tinggi dan grafis terbaik.</p>
-                </div>
-                <button class="btn btn-primary rounded-pill w-100 mt-3">Reserve</button>
-              </div>
-            </div>
-          </div>
+              <div class="card h-100 border-0 shadow-sm p-3 rounded-4">
+                  <img src="{{ $unit->image }}" 
+                      class="card-img-top p-3 mx-auto" 
+                      alt="{{ $unit->console_type }}" 
+                      style="height: 180px; object-fit: contain;">
+                  <div class="card-body text-center d-flex flex-column justify-content-between">
+                      <div>
+                          <h3 class="h5 card-title fw-bold">{{ $unit->console_type }}</h3>
+                          <p class="card-text text-muted small">{{ $unit->description }}</p>
 
-          <div class="col-md-6">
-            <div class="card h-100 border-0 shadow-sm p-3 rounded-4">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/PS4-Console-wDS4.png" class="card-img-top p-3 mx-auto" alt="PS4 Pro" style="height: 180px; object-fit: contain;">
-              <div class="card-body text-center d-flex flex-column justify-content-between">
-                <div>
-                  <h3 class="h5 card-title fw-bold">PlayStation 4 Pro</h3>
-                  <p class="card-text text-muted small">Gaming stabil dan nyaman.</p>
-                </div>
-                <button class="btn btn-primary rounded-pill w-100 mt-3">Reserve</button>
+                          {{-- Ketersediaan --}}
+                          @php
+                              $aktif    = $unit->rentals->where('status', 'active')->count();
+                              $tersedia = $unit->total - $aktif;
+                          @endphp
+                          <span class="badge {{ $tersedia > 0 && $unit->is_open ? 'bg-success' : 'bg-danger' }} rounded-pill">
+                              {{ $tersedia > 0 && $unit->is_open ? $tersedia . ' unit tersedia' : 'Penuh' }}
+                          </span>
+                      </div>
+
+                      @auth
+                          <a href="{{ route('sewa.pilih-waktu', $unit->id) }}" 
+                            class="btn btn-primary rounded-pill w-100 mt-3
+                                    {{ !$unit->is_open || $tersedia <= 0 ? 'disabled' : '' }}">
+                              Reserve
+                          </a>
+                      @endauth
+
+                      @guest
+                          <a href="{{ route('login') }}" 
+                            class="btn btn-primary rounded-pill w-100 mt-3">
+                              Reserve
+                          </a>
+                      @endguest
+                  </div>
               </div>
-            </div>
           </div>
+          @endforeach
 
         </div>
       </div>
